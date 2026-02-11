@@ -1,0 +1,10 @@
+# Dependencias del proyecto Cursor-Termux Bridge
+
+# Servidor
+fastapi>=0.104.0
+uvicorn[standard]>=0.24.0
+
+# Cliente
+requests>=2.31.0
+click>=8.1.7
+python-dotenv>=1.0.0

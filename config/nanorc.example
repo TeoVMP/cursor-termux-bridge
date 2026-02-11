@@ -1,0 +1,48 @@
+# Configuración de nano con syntax highlighting
+# Copia este archivo a ~/.nanorc en Termux
+
+# Habilitar números de línea
+set linenumbers
+
+# Habilitar auto-indentación
+set autoindent
+
+# Habilitar coloreado de sintaxis
+include /data/data/com.termux/files/usr/share/nano/*.nanorc
+
+# Colores personalizados (si están disponibles)
+# Puedes instalar más temas con: pkg install nano-syntax-highlighting
+
+# Configuración para Python
+syntax "python" "\.py$"
+color brightgreen "\<(and|as|assert|break|class|continue|def|del|elif|else|except|exec|finally|for|from|global|if|import|in|is|lambda|not|or|pass|print|raise|return|try|while|with|yield)\>"
+color brightblue "\<(False|None|True|__import__|abs|all|any|apply|basestring|bin|bool|buffer|bytearray|bytes|callable|chr|cmp|coerce|compile|complex|copyright|credits|delattr|dict|dir|divmod|enumerate|eval|execfile|exit|file|filter|float|format|frozenset|getattr|globals|hasattr|hash|help|hex|id|input|int|intern|isinstance|issubclass|iter|len|license|list|locals|long|map|max|memoryview|min|next|object|oct|open|ord|pow|print|property|range|raw_input|reduce|reload|repr|reversed|round|set|setattr|slice|sorted|staticmethod|str|sum|super|tuple|type|unichr|unicode|vars|xrange|zip)\>"
+color brightyellow ""[^"]*""
+color brightyellow "'[^']*'"
+color brightcyan "(^|[^[:alnum:]_.])[0-9]+[.][0-9]+"
+color brightcyan "(^|[^[:alnum:]_.])[0-9]+"
+color brightred "#.*"
+
+# Configuración para JavaScript
+syntax "javascript" "\.js$"
+color brightgreen "\<(break|case|catch|continue|default|delete|do|else|finally|for|function|if|in|instanceof|new|return|switch|this|throw|try|typeof|var|void|while|with)\>"
+color brightblue "\<(false|null|true|undefined|Infinity|NaN)\>"
+color brightyellow ""[^"]*""
+color brightyellow "'[^']*'"
+color brightcyan "[0-9]+"
+color brightred "//.*"
+
+# Configuración para JSON
+syntax "json" "\.json$"
+color brightgreen "\<(true|false|null)\>"
+color brightyellow ""[^"]*""
+color brightcyan "[0-9]+"
+color brightred "//.*"
+
+# Configuración para Markdown
+syntax "markdown" "\.md$"
+color brightgreen "^#+.*"
+color brightblue "^[-*].*"
+color brightyellow "\*\*[^*]+\*\*"
+color brightyellow "__[^_]+__"
+color brightcyan "`[^`]+`"

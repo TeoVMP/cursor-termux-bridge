@@ -188,21 +188,12 @@ Cuando el usuario te pida crear o modificar código:
         Genera código basado en una consulta y opcionalmente lo escribe en un archivo.
         Retorna: {"code": código, "explanation": explicación, "file_path": ruta}
         """
-        # Preparar prompt específico para generación de código
-        code_prompt = f"""El usuario quiere generar código. 
+        # Preparar prompt específico para generación de código (más directo para Ollama)
+        code_prompt = f"""Genera código Python para: {query}
 
-Consulta: {query}
-{"Archivo objetivo: " + file_path if file_path else ""}
+{"Archivo: " + file_path if file_path else ""}
 
-Responde SOLO con un JSON válido en este formato:
-{{
-    "code": "el código completo aquí",
-    "explanation": "breve explicación de lo que hace el código",
-    "language": "python/javascript/etc"
-}}
-
-Si el usuario no especifica un archivo pero quiere código, proporciona el código de todas formas.
-Si el usuario quiere código en un archivo específico, inclúyelo en la respuesta."""
+Responde SOLO con el código Python, sin explicaciones ni markdown. Solo el código."""
         
         messages = self._prepare_messages(history, code_prompt)
         response = self.chat(messages, code_prompt)

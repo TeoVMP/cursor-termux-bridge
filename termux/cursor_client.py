@@ -41,7 +41,9 @@ class CursorClient:
         kwargs.setdefault("headers", {}).update(self.headers)
         
         try:
-            response = requests.request(method, url, **kwargs, timeout=30)
+            # Timeout aumentado para Ollama (puede ser más lento)
+            timeout_value = kwargs.pop('timeout', 120)  # 2 minutos por defecto
+            response = requests.request(method, url, **kwargs, timeout=timeout_value)
             response.raise_for_status()
             return response
         except requests.exceptions.ConnectionError:

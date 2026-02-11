@@ -148,7 +148,7 @@ Cuando el usuario te pida crear o modificar código:
             response = requests.post(
                 f"{self.base_url}/api/chat",
                 json=payload,
-                timeout=120  # Ollama puede ser más lento
+                timeout=180  # Ollama puede ser más lento (3 minutos)
             )
             
             if response.status_code == 200:

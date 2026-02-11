@@ -120,34 +120,45 @@ Cuando el usuario te pida crear o modificar código:
             return f"Error al conectar con Anthropic: {str(e)}"
     
     def _chat_ollama(self, messages: List[Dict]) -> str:
-        """Chat con Ollama (modelo local)."""
+        """Chat con Ollama (modelo local) usando API de chat."""
         try:
-            # Convertir mensajes a formato Ollama
-            prompt = ""
+            # Ollama usa formato de mensajes similar a OpenAI
+            # Filtrar mensaje de sistema si existe
+            chat_messages = []
+            system_message = None
+            
             for msg in messages:
                 if msg["role"] == "system":
-                    prompt += f"System: {msg['content']}\n\n"
-                elif msg["role"] == "user":
-                    prompt += f"User: {msg['content']}\n\n"
-                elif msg["role"] == "assistant":
-                    prompt += f"Assistant: {msg['content']}\n\n"
+                    system_message = msg["content"]
+                else:
+                    chat_messages.append({
+                        "role": msg["role"],
+                        "content": msg["content"]
+                    })
             
-            prompt += "Assistant:"
+            payload = {
+                "model": os.getenv("OLLAMA_MODEL", "codellama"),
+                "messages": chat_messages,
+                "stream": False
+            }
+            
+            if system_message:
+                payload["system"] = system_message
             
             response = requests.post(
-                f"{self.base_url}/api/generate",
-                json={
-                    "model": os.getenv("OLLAMA_MODEL", "llama2"),
-                    "prompt": prompt,
-                    "stream": False
-                },
-                timeout=60
+                f"{self.base_url}/api/chat",
+                json=payload,
+                timeout=120  # Ollama puede ser más lento
             )
             
             if response.status_code == 200:
-                return response.json().get("response", "Error: No response from Ollama")
+                result = response.json()
+                return result.get("message", {}).get("content", "Error: No response from Ollama")
             else:
-                return f"Error: Ollama returned status {response.status_code}"
+                error_msg = response.text
+                return f"Error: Ollama returned status {response.status_code}: {error_msg}"
+        except requests.exceptions.ConnectionError:
+            return "Error: No se pudo conectar con Ollama. Asegúrate de que Ollama esté corriendo (ollama serve)"
         except Exception as e:
             return f"Error al conectar con Ollama: {str(e)}"
     

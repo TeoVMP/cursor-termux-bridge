@@ -57,7 +57,7 @@ class CodeWriter:
             if file_exists and mode == "integrate" and existing_code.strip():
                 integrated_code = self._integrate_code_intelligently(query, existing_code, history, file_path)
                 
-                if integrated_code:
+                if integrated_code and not integrated_code.startswith("Error"):
                     full_path.write_text(integrated_code, encoding="utf-8")
                     return {
                         "success": True,
@@ -83,10 +83,18 @@ class CodeWriter:
                     "file_path": file_path
                 }
             
+            # Verificar que no sea un mensaje de error
+            if code.startswith("Error") or "Error al conectar" in code or "quota" in code.lower():
+                return {
+                    "success": False,
+                    "error": code,
+                    "file_path": file_path
+                }
+            
             # Limpiar código (remover markdown si está presente)
             code = self._clean_code(code)
             
-            # Escribir archivo
+            # Escribir archivo solo si el código es válido
             full_path.write_text(code, encoding="utf-8")
             
             return {

@@ -3,12 +3,12 @@
 
 Write-Host "Configurando Ollama (modelo local gratuito)..." -ForegroundColor Cyan
 
-# Verificar si Ollama está instalado
+# Verificar si Ollama esta instalado
 try {
     $ollamaVersion = ollama --version 2>&1
-    Write-Host "✓ Ollama encontrado: $ollamaVersion" -ForegroundColor Green
+    Write-Host "[OK] Ollama encontrado: $ollamaVersion" -ForegroundColor Green
 } catch {
-    Write-Host "⚠ Ollama no está instalado" -ForegroundColor Yellow
+    Write-Host "[ADVERTENCIA] Ollama no esta instalado" -ForegroundColor Yellow
     Write-Host "`nInstala Ollama desde: https://ollama.ai/download" -ForegroundColor Yellow
     Write-Host "O ejecuta: winget install Ollama.Ollama" -ForegroundColor Yellow
     Write-Host "`nDespués de instalar, ejecuta este script de nuevo." -ForegroundColor Yellow
@@ -64,27 +64,27 @@ if ($content -match "OLLAMA_MODEL=") {
 # Guardar
 $content | Set-Content .env -NoNewline
 
-Write-Host "`n✓ Configuración completada!" -ForegroundColor Green
+Write-Host "`n[OK] Configuracion completada!" -ForegroundColor Green
 Write-Host "`nVariables configuradas:" -ForegroundColor Cyan
 Write-Host "  AI_PROVIDER=ollama" -ForegroundColor White
 Write-Host "  OLLAMA_BASE_URL=http://localhost:11434" -ForegroundColor White
 Write-Host "  OLLAMA_MODEL=$modeloElegido" -ForegroundColor White
 
-Write-Host "`n⚠ IMPORTANTE:" -ForegroundColor Yellow
-Write-Host "  1. Asegúrate de que Ollama esté corriendo" -ForegroundColor White
+Write-Host "`n[IMPORTANTE]:" -ForegroundColor Yellow
+Write-Host "  1. Asegurate de que Ollama este corriendo" -ForegroundColor White
 Write-Host "  2. Descarga el modelo: ollama pull $modeloElegido" -ForegroundColor White
-Write-Host "  3. Reinicia el servidor después de configurar" -ForegroundColor White
+Write-Host "  3. Reinicia el servidor despues de configurar" -ForegroundColor White
 
 # Verificar si el modelo está descargado
-Write-Host "`nVerificando si el modelo está descargado..." -ForegroundColor Cyan
+Write-Host "`nVerificando si el modelo esta descargado..." -ForegroundColor Cyan
 try {
     $models = ollama list 2>&1
     if ($models -match $modeloElegido) {
-        Write-Host "✓ Modelo $modeloElegido encontrado" -ForegroundColor Green
+        Write-Host "[OK] Modelo $modeloElegido encontrado" -ForegroundColor Green
     } else {
-        Write-Host "⚠ Modelo $modeloElegido no encontrado" -ForegroundColor Yellow
+        Write-Host "[ADVERTENCIA] Modelo $modeloElegido no encontrado" -ForegroundColor Yellow
         Write-Host "  Ejecuta: ollama pull $modeloElegido" -ForegroundColor White
     }
 } catch {
-    Write-Host "⚠ No se pudo verificar modelos" -ForegroundColor Yellow
+    Write-Host "[ADVERTENCIA] No se pudo verificar modelos" -ForegroundColor Yellow
 }

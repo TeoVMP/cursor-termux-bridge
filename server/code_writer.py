@@ -2,6 +2,7 @@
 Módulo para escribir código directamente en archivos usando IA.
 """
 import re
+import json
 from pathlib import Path
 from typing import Optional, Dict
 from .ai_integration import AIIntegration

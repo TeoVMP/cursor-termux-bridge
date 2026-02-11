@@ -146,17 +146,21 @@ def cli(ctx, server_url, api_token):
 @cli.command()
 @click.argument("query", required=True)
 @click.option("--new-session", "-n", is_flag=True, help="Crear nueva sesión")
+@click.option("--write", "-w", help="Escribir código generado en este archivo")
 @click.pass_context
-def query(ctx, query, new_session):
+def query(ctx, query, new_session, write):
     """Hace una consulta al asistente."""
     client = ctx.obj["client"]
     
-    result = client.query(query, new_session=new_session)
+    result = client.query(query, new_session=new_session, write_to_file=write)
     
     click.echo("\n" + "="*60)
     click.echo(result["response"])
     click.echo("="*60)
     click.echo(f"\nSesión: {result['session_id']}")
+    
+    if write:
+        click.echo(f"\n💾 Archivo: {write}")
 
 
 @cli.command()

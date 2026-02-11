@@ -41,6 +41,7 @@ class QueryRequest(BaseModel):
     query: str
     session_id: Optional[str] = None
     project_path: Optional[str] = None
+    write_to_file: Optional[str] = None  # Si se especifica, escribe código en este archivo
 
 
 class QueryResponse(BaseModel):

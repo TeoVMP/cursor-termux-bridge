@@ -42,7 +42,7 @@ class CursorClient:
         
         try:
             # Timeout aumentado para Ollama (puede ser más lento)
-            timeout_value = kwargs.pop('timeout', 120)  # 2 minutos por defecto
+            timeout_value = kwargs.pop('timeout', 300)  # 5 minutos por defecto para Ollama
             response = requests.request(method, url, **kwargs, timeout=timeout_value)
             response.raise_for_status()
             return response

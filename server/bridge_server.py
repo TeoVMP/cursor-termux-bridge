@@ -161,8 +161,15 @@ def process_query(request: QueryRequest, _: bool = Depends(verify_token)):
             from .code_writer import CodeWriter
             code_writer = CodeWriter()
             
-            # Detectar modo: si la consulta menciona "sobrescribir" o "reemplazar", usar overwrite
-            mode = "overwrite" if any(word in request.query.lower() for word in ["sobrescribir", "reemplazar", "overwrite", "replace"]) else "integrate"
+            # Detectar modo: overwrite para archivos nuevos o si se solicita explícitamente
+            file_path_full = Path(WORKSPACE_PATH) / request.write_to_file
+            file_exists = file_path_full.exists() and file_path_full.stat().st_size > 0
+            
+            # Usar overwrite si: archivo no existe, está vacío, o se solicita explícitamente
+            mode = "overwrite" if (
+                not file_exists or
+                any(word in request.query.lower() for word in ["sobrescribir", "reemplazar", "overwrite", "replace"])
+            ) else "integrate"
             
             result = code_writer.write_code_to_file(
                 request.query,

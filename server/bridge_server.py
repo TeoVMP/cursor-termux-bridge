@@ -160,16 +160,24 @@ def process_query(request: QueryRequest, _: bool = Depends(verify_token)):
         if request.write_to_file:
             from .code_writer import CodeWriter
             code_writer = CodeWriter()
+            
+            # Detectar modo: si la consulta menciona "sobrescribir" o "reemplazar", usar overwrite
+            mode = "overwrite" if any(word in request.query.lower() for word in ["sobrescribir", "reemplazar", "overwrite", "replace"]) else "integrate"
+            
             result = code_writer.write_code_to_file(
                 request.query,
                 request.write_to_file,
                 history,
-                WORKSPACE_PATH
+                WORKSPACE_PATH,
+                mode=mode
             )
             
             if result["success"]:
-                response_text += f"\n\n✅ Código escrito en: {result['file_path']}\n"
+                mode_msg = "integrado" if result.get("mode") == "integrate" else "escrito"
+                response_text += f"\n\n✅ Código {mode_msg} en: {result['file_path']}\n"
                 response_text += f"📝 {result.get('explanation', '')}"
+                if result.get("mode") == "integrate":
+                    response_text += "\n💡 El código se integró inteligentemente con el existente"
             else:
                 response_text += f"\n\n❌ Error al escribir archivo: {result.get('error', 'Unknown error')}"
                 

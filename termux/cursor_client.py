@@ -63,7 +63,7 @@ class CursorClient:
         """Establece la sesión activa."""
         SESSION_FILE.write_text(session_id)
     
-    def query(self, query_text: str, session_id: Optional[str] = None, new_session: bool = False) -> dict:
+    def query(self, query_text: str, session_id: Optional[str] = None, new_session: bool = False, write_to_file: Optional[str] = None) -> dict:
         """Envía una consulta al servidor."""
         if new_session:
             session_id = None
@@ -74,6 +74,9 @@ class CursorClient:
             "query": query_text,
             "session_id": session_id
         }
+        
+        if write_to_file:
+            data["write_to_file"] = write_to_file
         
         response = self._request("POST", "/query", json=data)
         result = response.json()

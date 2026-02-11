@@ -11,6 +11,7 @@ from pydantic import BaseModel
 import uvicorn
 
 from .session_manager import SessionManager
+from .ai_integration import AIIntegration
 
 
 app = FastAPI(title="Cursor-Termux Bridge Server")
@@ -26,6 +27,9 @@ app.add_middleware(
 
 # Inicializar gestor de sesiones
 session_manager = SessionManager()
+
+# Inicializar integración con IA
+ai_integration = AIIntegration()
 
 # Configuración
 WORKSPACE_PATH = os.getenv("CURSOR_WORKSPACE_PATH", ".")
@@ -147,11 +151,29 @@ def process_query(request: QueryRequest, _: bool = Depends(verify_token)):
     # Obtener historial para contexto
     history = session_manager.get_messages(session_id)
     
-    # TODO: Aquí se integraría con Cursor/IA real
-    # Por ahora, respuesta simulada
-    response_text = f"Recibí tu consulta: '{request.query}'\n\n"
-    response_text += f"Contexto de sesión: {len(history)} mensajes anteriores.\n"
-    response_text += "Esta es una respuesta simulada. En producción, aquí se conectaría con Cursor/IA."
+    # Llamar a la IA real
+    try:
+        response_text = ai_integration.chat(history, request.query)
+        
+        # Si se solicita escribir código en un archivo
+        if request.write_to_file:
+            from .code_writer import CodeWriter
+            code_writer = CodeWriter()
+            result = code_writer.write_code_to_file(
+                request.query,
+                request.write_to_file,
+                history,
+                WORKSPACE_PATH
+            )
+            
+            if result["success"]:
+                response_text += f"\n\n✅ Código escrito en: {result['file_path']}\n"
+                response_text += f"📝 {result.get('explanation', '')}"
+            else:
+                response_text += f"\n\n❌ Error al escribir archivo: {result.get('error', 'Unknown error')}"
+                
+    except Exception as e:
+        response_text = f"Error al conectar con IA: {str(e)}\n\nAsegúrate de configurar AI_PROVIDER y la API key correspondiente en .env"
     
     # Añadir respuesta del asistente
     session_manager.add_message(session_id, "assistant", response_text)
